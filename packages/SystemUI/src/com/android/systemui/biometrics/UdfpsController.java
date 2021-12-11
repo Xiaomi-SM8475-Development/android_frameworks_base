@@ -58,6 +58,7 @@ import android.os.VibrationAttributes;
 import android.os.VibrationEffect;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.BoostFramework;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
@@ -234,6 +235,11 @@ public class UdfpsController implements DozeReceiver, Dumpable {
     private boolean mScreenOffFod;
 
     private UdfpsAnimation mUdfpsAnimation;
+
+    // Boostframework for UDFPS
+    private BoostFramework mPerf = null;
+    private boolean mIsPerfLockAcquired = false;
+    private static final int BOOST_DURATION_TIMEOUT = 2000;
 
     @VisibleForTesting
     public static final VibrationAttributes UDFPS_VIBRATION_ATTRIBUTES =
@@ -984,6 +990,7 @@ public class UdfpsController implements DozeReceiver, Dumpable {
                 }
             );
         }
+        mPerf = new BoostFramework();
 
         if (com.android.internal.util.crdroid.Utils.isPackageInstalled(mContext,
                 "com.crdroid.udfps.animations")) {
@@ -1075,6 +1082,13 @@ public class UdfpsController implements DozeReceiver, Dumpable {
             }
         } else {
             Log.v(TAG, "showUdfpsOverlay | the overlay is already showing");
+        }
+
+        if (mPerf != null && !mIsPerfLockAcquired) {
+            mPerf.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
+                    null,
+                    BOOST_DURATION_TIMEOUT);
+            mIsPerfLockAcquired = true;
         }
     }
 
@@ -1443,6 +1457,12 @@ public class UdfpsController implements DozeReceiver, Dumpable {
         if (isOptical()) {
             unconfigureDisplay(view);
         }
+
+        if (mPerf != null && mIsPerfLockAcquired) {
+            mPerf.perfLockRelease();
+            mIsPerfLockAcquired = false;
+        }
+        
         cancelAodSendFingerUpAction();
 
         // Add a delay to ensure that the dim amount is updated after the display has had chance
