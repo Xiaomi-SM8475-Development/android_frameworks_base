@@ -2396,11 +2396,7 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
                 windowDisableStarting);
         // If this activity is launched from system surface, ignore windowDisableStarting
         if (windowIsTranslucent || windowIsFloating) {
-<<<<<<< HEAD
-            translucentWindowLaunch = true;
-=======
 	    translucentWindowLaunch = true;
->>>>>>> de4f2b8fea88 ([SQUASH] core: Port CLO's Framework Boost for Android U)
             return false;
         }
         if (windowShowWallpaper
@@ -6434,11 +6430,7 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
 
     void stopIfPossible() {
         if (DEBUG_SWITCH) Slog.d(TAG_SWITCH, "Stopping: " + this);
-<<<<<<< HEAD
-        launching = false;
-=======
 	launching = false;
->>>>>>> de4f2b8fea88 ([SQUASH] core: Port CLO's Framework Boost for Android U)
         final Task rootTask = getRootTask();
         if (isNoHistory()) {
             if (!finishing) {
